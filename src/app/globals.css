@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+:root {
+  /* Office Color Palette */
+  --office-primary: #0078d4;
+  --office-primary-hover: #106ebe;
+  --office-bg-main: #f3f2f1;
+  --office-surface: #ffffff;
+  --office-header: #faf9f8;
+  --office-border-soft: #edebe9;
+  --office-border-darker: #d2d0ce;
+  --office-text-primary: #323130;
+  --office-text-secondary: #605e5c;
+  --office-text-muted: #a19f9d;
+
+  /* Feedback colors */
+  --office-success-bg: #dff6dd;
+  --office-success-text: #107c10;
+  --office-warning-bg: #fff8f1;
+  --office-warning-text: #d83f00;
+  --office-error-bg: #fde7e9;
+  --office-error-text: #d83b01;
+
+  /* Mapping to Tailwind */
+  --background: var(--office-bg-main);
+  --foreground: var(--office-text-primary);
+}
+
+@theme inline {
+  --color-office-primary: var(--office-primary);
+  --color-office-primary-hover: var(--office-primary-hover);
+  --color-office-bg: var(--office-bg-main);
+  --color-office-surface: var(--office-surface);
+  --color-office-header: var(--office-header);
+  --color-office-border: var(--office-border-soft);
+  --color-office-border-dark: var(--office-border-darker);
+  --color-office-text: var(--office-text-primary);
+  --color-office-text-secondary: var(--office-text-secondary);
+  --color-office-text-muted: var(--office-text-muted);
+
+  --color-office-success-bg: var(--office-success-bg);
+  --color-office-success-text: var(--office-success-text);
+  --color-office-warning-bg: var(--office-warning-bg);
+  --color-office-warning-text: var(--office-warning-text);
+  --color-office-error-bg: var(--office-error-bg);
+  --color-office-error-text: var(--office-error-text);
+
+  /* Typography */
+  --font-office: "Inter", "Segoe UI", system-ui, sans-serif;
+  --font-size-office-xs: 11px;
+  --font-size-office-sm: 13px;
+  --font-size-office-base: 14px;
+
+  /* Effects */
+  --radius-office: 4px;
+  --shadow-office: 0px 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+body {
+  background: var(--office-bg-main);
+  color: var(--office-text-primary);
+  font-family: var(--font-office);
+  font-size: var(--font-size-office-sm);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Productivity Grid Utilities */
+@layer utilities {
+  .office-card {
+    @apply bg-office-surface rounded-office border border-office-border shadow-office overflow-hidden;
+  }
+  
+  .office-toolbar {
+    @apply bg-office-header border-b border-office-border px-4 py-2 flex items-center gap-2;
+  }
+
+  .office-btn-primary {
+    @apply bg-office-primary text-white px-4 py-1.5 rounded-office font-medium hover:bg-office-primary-hover transition-colors shadow-sm;
+  }
+
+  .office-btn-secondary {
+    @apply bg-office-surface text-office-text border border-office-border-dark px-4 py-1.5 rounded-office font-medium hover:bg-office-bg transition-colors;
+  }
+
+  .office-btn-ghost {
+    @apply text-office-text-secondary p-2 rounded-office hover:bg-office-bg transition-colors;
+  }
+}
