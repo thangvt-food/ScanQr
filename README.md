@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 ScanQr - Hệ Thống Điểm Danh QR Multi-Project
 
-## Getting Started
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=white)](https://firebase.google.com/)
+[![Google Sheets](https://img.shields.io/badge/Google%20Sheets-34A853?style=for-the-badge&logo=google-sheets&logoColor=white)](https://www.google.com/sheets/about/)
 
-First, run the development server:
+**ScanQr** là một nền tảng web hiện đại được thiết kế để quản lý điểm danh và thu thập dữ liệu thông qua mã QR trên nhiều dự án khác nhau. Hệ thống tích hợp sâu với Google Sheets để đồng bộ dữ liệu thời gian thực và sử dụng Firebase để quản lý trạng thái ứng dụng.
 
+## ✨ Tính Năng Nổi Bật
+
+- **Quản Lý Đa Dự Án (Multi-Project):** Quản lý nhiều chiến dịch/dự án quét mã QR khác nhau trên cùng một nền tảng.
+- **Quét Mã QR Hiệu Suất Cao:** Tích hợp trình quét mã QR mượt mà, hỗ trợ nhiều loại thiết bị.
+- **Đồng Bộ Google Sheets Thông Minh:** Tự động tạo và cập nhật dữ liệu vào trang tính Google Sheets theo từng dự án.
+- **Thiết Kế "Office Desktop":** Giao diện chuyên nghiệp, tối ưu cho năng suất làm việc, lấy cảm hứng từ các ứng dụng văn phòng hiện đại.
+- **Phân Quyền & Bảo Mật:** Hệ thống Admin mạnh mẽ để quản lý cấu hình và theo dõi hoạt động.
+
+## 🛠️ Công Nghệ Sử Dụng
+
+- **Frontend:** Next.js 15 (App Router), React, CSS Modules (Office Design System).
+- **Backend/Database:** Firebase Realtime Database, Firestore, Firebase Admin SDK.
+- **Integration:** Google OAuth2, Google Sheets API v4.
+- **Deployment:** Vercel.
+
+## 🚀 Hướng Dẫn Cài Đặt
+
+### 1. Clone Repository
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/aczaao12/ScanQr.git
+cd ScanQr
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Cấu Hình Biến Môi Trường
+Tạo file `.env.local` tại thư mục gốc và cấu hình các thông số sau:
+```env
+NEXT_PUBLIC_FIREBASE_API_KEY=your_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_domain
+# ... bổ sung các key khác
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Cài Đặt Dependencies
+```bash
+pnpm install
+# hoặc
+npm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Chạy Development
+```bash
+pnpm dev
+```
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📄 Giấy Phép
+Dự án được phát triển bởi **aczaao12**. Mọi quyền được bảo lưu.
