@@ -9,7 +9,7 @@ interface ScannerHeaderProps {
   sheetName: string;
   projectName?: string;
   isSyncing: boolean;
-  syncStatus: any;
+  syncStatus?: any;
   onLogin: () => void;
   onLogout: () => void;
   onSync: () => void;
