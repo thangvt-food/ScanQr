@@ -1,63 +1,93 @@
 "use client";
 
 import React from "react";
-import { 
-  Bell, 
-  Search, 
-  User, 
-  Cloud, 
+import {
+  Bell,
+  Search,
+  User,
+  Cloud,
   HelpCircle,
-  Maximize2
+  Maximize2,
+  LogOut,
+  ChevronDown
 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 const Header = () => {
+  const { user, logout } = useAuth();
+  const [showUserMenu, setShowUserMenu] = React.useState(false);
+
   return (
     <header className="h-14 bg-office-surface border-b border-office-border flex items-center justify-between px-6 sticky top-0 z-30">
-      {/* Search Bar - System Style */}
-      <div className="flex-1 max-w-xl">
-        <div className="relative group">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-office-text-muted group-focus-within:text-office-primary transition-colors" size={16} />
-          <input 
-            type="text" 
-            placeholder="Search commands or records... (Ctrl+/)"
-            className="w-full bg-office-bg border border-office-border focus:border-office-primary focus:ring-1 focus:ring-office-primary/20 rounded-office pl-10 pr-4 py-1.5 office-sm transition-all outline-none text-office-text"
-          />
-        </div>
-      </div>
+      {/* Search Bar - Removed as per feedback it was "ảo" */}
+      <div className="flex-1" />
 
       {/* Right Actions */}
-      <div className="flex items-center gap-1">
-        {/* Connection Status */}
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-office text-office-success-text bg-office-success-bg/50 border border-office-success-text/10 mr-4">
-          <div className="w-1.5 h-1.5 rounded-full bg-office-success-text animate-pulse" />
-          <span className="office-xs font-bold uppercase tracking-wider">Sheet Connected</span>
-        </div>
-
-        <button className="office-btn-ghost" title="Fullscreen">
+      <div className="flex items-center gap-2">
+        <button className="office-btn-ghost active:scale-95" title="Toàn màn hình" onClick={() => {
+          if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+          } else {
+            document.exitFullscreen();
+          }
+        }}>
           <Maximize2 size={18} />
         </button>
-        
-        <button className="office-btn-ghost relative" title="Notifications">
-          <Bell size={18} />
-          <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-office-surface" />
-        </button>
 
-        <button className="office-btn-ghost" title="Help">
-          <HelpCircle size={18} />
+        <button className="office-btn-ghost relative active:scale-95" title="Thông báo">
+          <Bell size={18} />
+          <div className="absolute top-2 right-2 w-1.5 h-1.5 bg-office-primary rounded-full border border-office-surface" />
         </button>
 
         <div className="h-6 w-[1px] bg-office-border mx-2" />
 
         {/* User Profile */}
-        <button className="flex items-center gap-3 pl-2 pr-1 py-1 rounded-office hover:bg-office-bg transition-colors border border-transparent hover:border-office-border">
-          <div className="flex flex-col items-end">
-            <span className="office-sm font-semibold text-office-text leading-tight">Admin User</span>
-            <span className="office-xs text-office-text-secondary leading-tight">Administrator</span>
-          </div>
-          <div className="w-8 h-8 rounded-office bg-office-primary/10 border border-office-primary/20 flex items-center justify-center text-office-primary">
-            <User size={18} />
-          </div>
-        </button>
+        <div className="relative">
+          <button
+            onClick={() => setShowUserMenu(!showUserMenu)}
+            className="flex items-center gap-3 pl-2 pr-1 py-1 rounded-office hover:bg-office-bg transition-all border border-transparent hover:border-office-border active:scale-95 group"
+          >
+            <div className="flex flex-col items-end">
+              <span className="office-sm font-semibold text-office-text leading-tight truncate max-w-[120px]">
+                {user?.displayName || "Người dùng"}
+              </span>
+            </div>
+            <div className="w-8 h-8 rounded-full bg-office-primary/10 border border-office-primary/20 flex items-center justify-center text-office-primary group-hover:bg-office-primary group-hover:text-white transition-all overflow-hidden">
+              {user?.photoURL ? (
+                <img src={user.photoURL} alt="Avatar" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+              ) : (
+                <User size={18} />
+              )}
+            </div>
+            <ChevronDown size={14} className={`text-office-text-muted transition-transform duration-300 ${showUserMenu ? 'rotate-180' : ''}`} />
+          </button>
+
+          {/* User Dropdown */}
+          {showUserMenu && (
+            <>
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setShowUserMenu(false)}
+              />
+              <div className="absolute right-0 mt-2 w-56 bg-white border border-office-border rounded-lg shadow-2xl z-50 py-1 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="px-4 py-3 border-b border-office-border/50">
+                  <p className="office-xs text-office-text-muted font-bold uppercase tracking-widest mb-1">Tài khoản hiện tại</p>
+                  <p className="office-sm font-bold text-office-text truncate">{user?.email}</p>
+                </div>
+
+                <div className="py-1">
+                  <button
+                    onClick={() => logout()}
+                    className="w-full flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 office-sm font-bold transition-colors"
+                  >
+                    <LogOut size={16} />
+                    <span>Đăng xuất</span>
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </header>
   );

@@ -23,21 +23,21 @@ const Sidebar = () => {
 
   // Menu items for the Workspace (Global level)
   const workspaceMenuItems = [
-    { icon: LayoutDashboard, label: "Your Projects", href: "/" },
-    { icon: Settings, label: "App Settings", href: "/app-settings" }, // Global settings
-    { icon: BookOpen, label: "Documentation", href: "/docs" },
-    { icon: PlayCircle, label: "YouTube Channel", href: "https://youtube.com", external: true },
-    { icon: User, label: "Developer Info", href: "/about" },
+    { icon: LayoutDashboard, label: "Dự án của bạn", href: "/" },
+    { icon: Settings, label: "Cài đặt ứng dụng", href: "/app-settings" }, // Global settings
+    { icon: BookOpen, label: "Tài liệu hướng dẫn", href: "/docs" },
+    { icon: PlayCircle, label: "Kênh YouTube", href: "https://youtube.com", external: true },
+    { icon: User, label: "Thông tin phát triển", href: "/about" },
   ];
 
   // Menu items for a Specific Project
   const projectMenuItems = [
-    { icon: LayoutDashboard, label: "Project Home", href: `/p/${projectId}/dashboard` },
-    { icon: QrCode, label: "QR Scanner", href: `/p/${projectId}/scanner` },
-    { icon: FileSpreadsheet, label: "Live Sheets", href: `/p/${projectId}/sheets` },
-    { icon: Smartphone, label: "Mobile Scanners", href: `/p/${projectId}/collaboration` },
-    { icon: Settings, label: "Project Settings", href: `/p/${projectId}/settings` },
-    { icon: History, label: "Sync History", href: `/p/${projectId}/history` },
+    { icon: LayoutDashboard, label: "Tổng quan dự án", href: `/p/${projectId}/dashboard` },
+    { icon: QrCode, label: "Trình quét QR", href: `/p/${projectId}/scanner` },
+    { icon: FileSpreadsheet, label: "Bảng tính trực tiếp", href: `/p/${projectId}/sheets` },
+    { icon: Smartphone, label: "Quét qua di động", href: `/p/${projectId}/collaboration` },
+    { icon: Settings, label: "Cài đặt dự án", href: `/p/${projectId}/settings` },
+    { icon: History, label: "Lịch sử đồng bộ", href: `/p/${projectId}/history` },
   ];
 
   const currentMenu = projectId ? projectMenuItems : workspaceMenuItems;
@@ -51,7 +51,7 @@ const Sidebar = () => {
             <QrCode size={20} />
           </div>
           <span className="font-bold text-office-text tracking-tight office-sm uppercase truncate">
-            {projectId ? "Project View" : "ScanQR Admin"}
+            {projectId ? "Chế độ dự án" : "Quản trị ScanQR"}
           </span>
         </div>
       </div>
@@ -64,7 +64,7 @@ const Sidebar = () => {
             className="flex items-center gap-3 px-4 py-2 text-office-text-secondary hover:text-office-primary hover:bg-office-primary/5 rounded-office transition-all office-xs font-bold uppercase tracking-widest"
           >
             <ArrowLeft size={16} />
-            <span>Switch Project</span>
+            <span>Chuyển dự án</span>
           </Link>
           <div className="mt-4 px-4 pb-2">
             <div className="h-px bg-office-border w-full" />
@@ -126,7 +126,7 @@ const Sidebar = () => {
       {/* Sidebar Footer */}
       <div className="p-4 border-t border-office-border bg-office-header">
         <div className="office-xs text-office-text-muted font-bold uppercase tracking-widest text-center">
-          v2.0 Project-Aware
+          v2.0 Hỗ trợ dự án
         </div>
       </div>
     </aside>

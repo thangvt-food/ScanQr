@@ -60,24 +60,24 @@ export const ProjectManager = () => {
       setNewProject({ name: "", spreadsheetId: "", sheetName: "Sheet1" });
     } catch (error) {
       console.error("Failed to create project", error);
-      alert("Error creating project");
+      alert("Lỗi khi tạo dự án");
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!user || !confirm("Are you sure you want to delete this project? All internal config will be lost.")) return;
+    if (!user || !confirm("Bạn có chắc chắn muốn xóa dự án này? Toàn bộ cấu hình sẽ bị mất.")) return;
     await projectService.deleteProject(user.uid, id);
   };
 
-  if (loading) return <div className="p-8 text-center text-office-text-secondary office-sm uppercase tracking-widest animate-pulse">Loading Workspace...</div>;
+  if (loading) return <div className="p-8 text-center text-office-text-secondary office-sm uppercase tracking-widest animate-pulse">Đang nạp dữ liệu...</div>;
   
   if (error) {
     return (
       <div className="office-card p-12 text-center border-red-200 bg-red-50">
         <Database size={48} className="mx-auto text-red-300 mb-4" />
-        <h3 className="font-bold text-red-800 mb-2 uppercase">Connection Error</h3>
+        <h3 className="font-bold text-red-800 mb-2 uppercase">Lỗi kết nối</h3>
         <p className="text-red-600 office-sm mb-6">{error}</p>
-        <button onClick={() => window.location.reload()} className="office-btn-primary bg-red-600 border-red-700 hover:bg-red-700">Retry Connection</button>
+        <button onClick={() => window.location.reload()} className="office-btn-primary bg-red-600 border-red-700 hover:bg-red-700">Thử lại</button>
       </div>
     );
   }
@@ -85,21 +85,21 @@ export const ProjectManager = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold text-office-text-secondary uppercase tracking-widest">Your Projects</h2>
+        <h2 className="text-lg font-bold text-office-text-secondary uppercase tracking-widest">Dự án của bạn</h2>
         <button 
           onClick={() => setIsAdding(true)}
           className="office-btn-primary flex items-center gap-2"
         >
-          <Plus size={16} /> New Project
+          <Plus size={16} /> Dự án mới
         </button>
       </div>
 
       {projects.length === 0 && !isAdding && (
         <div className="office-card p-12 text-center">
           <Database size={48} className="mx-auto text-office-border mb-4" />
-          <h3 className="font-bold text-office-text mb-2">No Projects Found</h3>
-          <p className="text-office-text-secondary office-sm mb-6">Create your first QR scanning project to get started.</p>
-          <button onClick={() => setIsAdding(true)} className="office-btn-secondary">Get Started</button>
+          <h3 className="font-bold text-office-text mb-2">Không tìm thấy dự án</h3>
+          <p className="text-office-text-secondary office-sm mb-6">Tạo dự án đầu tiên của bạn để bắt đầu quét mã QR.</p>
+          <button onClick={() => setIsAdding(true)} className="office-btn-secondary">Bắt đầu ngay</button>
         </div>
       )}
 
@@ -116,7 +116,7 @@ export const ProjectManager = () => {
                     onClick={() => {
                       const url = `${window.location.origin}/p/${project.id}/scanner`;
                       navigator.clipboard.writeText(url);
-                      alert("Link copied to clipboard! Open this on your phone.");
+                      alert("Đã sao chép liên kết! Hãy mở liên kết này trên điện thoại của bạn.");
                     }}
                     className="p-1.5 text-office-text-muted hover:text-office-primary transition-colors"
                   >
@@ -143,13 +143,13 @@ export const ProjectManager = () => {
                   href={`/p/${project.id}/scanner`}
                   className="office-btn-primary office-xs flex items-center justify-center gap-2 py-2"
                 >
-                  <QrCode size={14} /> Scanner
+                  <QrCode size={14} /> Trình quét
                 </Link>
                 <Link 
                   href={`/p/${project.id}/settings`}
                   className="office-btn-secondary office-xs flex items-center justify-center gap-2 py-2"
                 >
-                  <Settings size={14} /> Config
+                  <Settings size={14} /> Cấu hình
                 </Link>
               </div>
             </div>
@@ -178,7 +178,7 @@ export const ProjectManager = () => {
           <div className="office-card w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
             <div className="bg-office-primary p-4 flex justify-between items-center">
               <h3 className="text-white font-bold uppercase tracking-widest office-sm flex items-center gap-2">
-                <Plus size={18} /> New Workspace
+                <Plus size={18} /> Tạo dự án mới
               </h3>
               <button onClick={() => setIsAdding(false)} className="text-white/80 hover:text-white">
                 <X size={20} />
@@ -187,11 +187,11 @@ export const ProjectManager = () => {
             
             <form onSubmit={handleCreate} className="p-6 space-y-4">
               <div className="space-y-1">
-                <label className="office-xs font-bold text-office-text-secondary uppercase">Project Name</label>
+                <label className="office-xs font-bold text-office-text-secondary uppercase">Tên dự án</label>
                 <input 
                   type="text" 
                   required
-                  placeholder="e.g., Final Exam Attendance"
+                  placeholder="VD: Điểm danh thi học kỳ"
                   className="office-input w-full"
                   value={newProject.name}
                   onChange={e => setNewProject({...newProject, name: e.target.value})}
@@ -202,16 +202,16 @@ export const ProjectManager = () => {
                 <label className="office-xs font-bold text-office-text-secondary uppercase">Google Spreadsheet ID</label>
                 <input 
                   type="text" 
-                  placeholder="Paste ID from URL"
+                  placeholder="Dán ID từ đường dẫn URL"
                   className="office-input w-full"
                   value={newProject.spreadsheetId}
                   onChange={e => setNewProject({...newProject, spreadsheetId: e.target.value})}
                 />
-                <p className="office-xs text-office-text-muted italic">Can be added later in settings</p>
+                <p className="office-xs text-office-text-muted italic">Có thể bổ sung sau trong phần cài đặt</p>
               </div>
 
               <div className="space-y-1">
-                <label className="office-xs font-bold text-office-text-secondary uppercase">Default Sheet Name</label>
+                <label className="office-xs font-bold text-office-text-secondary uppercase">Tên Sheet mặc định</label>
                 <input 
                   type="text" 
                   className="office-input w-full"
@@ -221,8 +221,8 @@ export const ProjectManager = () => {
               </div>
 
               <div className="pt-4 flex gap-3">
-                <button type="button" onClick={() => setIsAdding(false)} className="office-btn-ghost flex-1">Cancel</button>
-                <button type="submit" className="office-btn-primary flex-1">Create Project</button>
+                <button type="button" onClick={() => setIsAdding(false)} className="office-btn-ghost flex-1">Hủy</button>
+                <button type="submit" className="office-btn-primary flex-1">Tạo dự án</button>
               </div>
             </form>
           </div>
