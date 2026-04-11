@@ -25,7 +25,7 @@ export const RemoteScanHeader: React.FC<RemoteScanHeaderProps> = ({ projectName,
       <div className="text-right">
          <p className="text-[10px] text-office-text-muted font-bold uppercase">System Status</p>
          <p className="text-[10px] text-green-600 font-bold uppercase tracking-widest flex items-center gap-1 justify-end">
-           <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" /> Encrypted Live
+           <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" /> Encrypted Live
          </p>
       </div>
     </div>

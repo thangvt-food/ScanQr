@@ -9,7 +9,6 @@ import { UserCheck, Loader2 } from "lucide-react";
 import { useRemoteScan } from "./hooks/useRemoteScan";
 import { RemoteScanAuthGuard } from "./components/RemoteScanAuthGuard";
 import { RemoteScanHeader } from "./components/RemoteScanHeader";
-import { RemoteScanActions } from "./components/RemoteScanActions";
 import { RemoteScanManualForm } from "./components/RemoteScanManualForm";
 import { RemoteScanStatus } from "./components/RemoteScanStatus";
 
@@ -19,8 +18,7 @@ function RemoteScanContent() {
   const projectId = params.projectId as string;
   const ownerUid = searchParams.get("uid");
 
-  // State for UI toggles
-  const [showScanner, setShowScanner] = useState(false);
+
 
   // Custom hook for all logic
   const {
@@ -34,7 +32,8 @@ function RemoteScanContent() {
     isSyncing,
     debugLog,
     login,
-    submitRecord
+    submitRecord,
+    allRecords
   } = useRemoteScan(projectId, ownerUid);
 
   if (loading) {
@@ -94,15 +93,12 @@ function RemoteScanContent() {
           {lastScanned ? (
             <RemoteScanStatus mssv={lastScanned} />
           ) : (
-            <div className="w-full space-y-6">
-              <RemoteScanActions onOpenScanner={() => setShowScanner(true)} />
-              
               <RemoteScanManualForm 
                 fields={project?.fields || []}
                 isSyncing={isSyncing}
+                allRecords={allRecords}
                 onSubmit={(mssv, data) => submitRecord(mssv, data, "Manual")}
               />
-            </div>
           )}
         </main>
 
@@ -117,16 +113,7 @@ function RemoteScanContent() {
           </p>
         </footer>
 
-        {/* Overlays */}
-        {showScanner && (
-          <Scanner 
-            onScanSuccess={(val) => {
-              submitRecord(val, {}, "Camera");
-              setShowScanner(false);
-            }}
-            onClose={() => setShowScanner(false)}
-          />
-        )}
+
       </div>
     </RemoteScanAuthGuard>
   );

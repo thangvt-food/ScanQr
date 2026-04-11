@@ -11,6 +11,7 @@ export function useRemoteScan(projectId: string, ownerUid: string | null) {
   const [deviceIp, setDeviceIp] = useState("");
   const [lastScanned, setLastScanned] = useState<string | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [allRecords, setAllRecords] = useState<ScanRecord[]>([]);
   
   const [debugLog, setDebugLog] = useState<string[]>(["Waiting for URL parameters..."]);
   const sessionIdRef = useRef<string | null>(null);
@@ -121,6 +122,12 @@ export function useRemoteScan(projectId: string, ownerUid: string | null) {
 
         projectService.getProject(ownerUid, projectId, (pData) => {
           setProject(pData);
+          
+          // Also subscribe to records to track counts globally
+          projectService.subscribeToRecords(ownerUid, projectId, (recs) => {
+            setAllRecords(recs);
+          });
+
           setAuthStatus("logged_in");
         });
       } else {
@@ -181,6 +188,7 @@ export function useRemoteScan(projectId: string, ownerUid: string | null) {
     isSyncing,
     debugLog,
     login,
-    submitRecord
+    submitRecord,
+    allRecords
   };
 }
