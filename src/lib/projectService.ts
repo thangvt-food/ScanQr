@@ -30,7 +30,7 @@ export const projectService = {
     await remove(blockRef);
   },
 
-  subscribeToBlockedIps: (userId: string, projectId: string, callback: (ips: string[]) => void) => {
+  subscribeToBlockedIps: (userId: string, projectId: string, callback: (ips: string[]) => void, errorCallback?: (error: any) => void) => {
     const blockRef = ref(rtdb, `users/${userId}/projects/${projectId}/blockedIps`);
     return onValue(blockRef, (snapshot) => {
       const data = snapshot.val();
@@ -39,6 +39,8 @@ export const projectService = {
         return;
       }
       callback(Object.keys(data).map(k => k.replace(/_/g, '.')));
+    }, (error) => {
+      if (errorCallback) errorCallback(error);
     });
   },
 

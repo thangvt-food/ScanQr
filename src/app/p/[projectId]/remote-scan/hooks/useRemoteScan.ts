@@ -12,13 +12,15 @@ export function useRemoteScan(projectId: string, ownerUid: string | null) {
   const [lastScanned, setLastScanned] = useState<string | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
   
+  const [debugLog, setDebugLog] = useState<string[]>(["Waiting for URL parameters..."]);
   const sessionIdRef = useRef<string | null>(null);
 
   useEffect(() => {
-    // Wait until both IDs are available from the URL
+    console.log("RemoteScan Effect Run", { ownerUid, projectId });
     if (!ownerUid || !projectId) return;
 
     const init = async () => {
+      setDebugLog(prev => [...prev, "IDs detected. Initializing process..."]);
       const timeout = setTimeout(() => {
         if (loading) {
           setAuthStatus("error");
@@ -28,24 +30,35 @@ export function useRemoteScan(projectId: string, ownerUid: string | null) {
 
       try {
         // 1. Get Device IP
+        setDebugLog(prev => [...prev, "Step 1: Fetching device IP..."]);
         let currentIp = "unknown";
         try {
           const ipRes = await fetch("https://api.ipify.org?format=json", { signal: AbortSignal.timeout(4000) });
           const ipData = await ipRes.json();
           currentIp = ipData.ip;
+          setDebugLog(prev => [...prev, `IP detected: ${currentIp}`]);
         } catch (e) {
           console.warn("IP fetch failed, continuing as unknown");
+          setDebugLog(prev => [...prev, "IP detection failed (Network block?), using unknown"]);
         }
         setDeviceIp(currentIp);
 
         // 2. Check Blacklist
+        setDebugLog(prev => [...prev, "Step 2: Connecting to Firebase Blacklist..."]);
         const unsubBlocked = projectService.subscribeToBlockedIps(ownerUid, projectId, (blockedIps) => {
+          setDebugLog(prev => [...prev, "Firebase response received."]);
           if (blockedIps.includes(currentIp)) {
             setAuthStatus("blocked");
+          }
+        }, (error) => {
+          setDebugLog(prev => [...prev, `FIREBASE ERROR: ${error.message}`]);
+          if (error.message.includes("permission_denied")) {
+             setDebugLog(prev => [...prev, "HINT: Check your Firebase Database Rules!"]);
           }
         });
 
         // 3. Session Manager
+        setDebugLog(prev => [...prev, "Step 3: Preparing session storage..."]);
         const sessionKey = `scan_session_${projectId}`;
         let sid = sessionStorage.getItem(sessionKey);
         if (!sid) {
@@ -54,11 +67,28 @@ export function useRemoteScan(projectId: string, ownerUid: string | null) {
         }
         sessionIdRef.current = sid;
 
+        setDebugLog(prev => [...prev, "Step 4: Registering active session via API..."]);
+        const sessionPayload = {
+          id: sid,
+          ip: currentIp,
+          device: navigator.userAgent.split(')')[0].split('(')[1] || "Mobile Device"
+        };
+
+        const res = await fetch("/api/remote/session", {
+          method: "POST",
+          body: JSON.stringify({ ownerUid, projectId, session: sessionPayload })
+        });
+
+        if (!res.ok) throw new Error("API Session Registration Failed");
+
         clearTimeout(timeout);
+        setDebugLog(prev => [...prev, "INIT COMPLETE."]);
         setLoading(false);
         return () => unsubBlocked();
       } catch (err) {
         clearTimeout(timeout);
+        const errMsg = (err as any).message || "Unknown error";
+        setDebugLog(prev => [...prev, `CRITICAL ERROR: ${errMsg}`]);
         setAuthStatus("error");
         setLoading(false);
       }
@@ -74,11 +104,19 @@ export function useRemoteScan(projectId: string, ownerUid: string | null) {
     projectService.subscribeToCollaborators(ownerUid, projectId, async (cols) => {
       const user = cols.find(c => c.username === userData.username && c.password === userData.password);
       if (user) {
-        await projectService.registerSession(ownerUid, projectId, {
-          id: sessionIdRef.current!,
-          ip: deviceIp,
-          device: navigator.userAgent.split(')')[0].split('(')[1] || "Mobile Device",
-          username: user.username
+        // Register Session with Username
+        await fetch("/api/remote/session", {
+           method: "POST",
+           body: JSON.stringify({ 
+             ownerUid, 
+             projectId, 
+             session: {
+               id: sessionIdRef.current!,
+               ip: deviceIp,
+               device: navigator.userAgent.split(')')[0].split('(')[1] || "Mobile Device",
+               username: user.username
+             }
+           })
         });
 
         projectService.getProject(ownerUid, projectId, (pData) => {
@@ -110,7 +148,17 @@ export function useRemoteScan(projectId: string, ownerUid: string | null) {
         if (field.id !== "mssv" && !fullData[field.id]) fullData[field.id] = "";
       });
 
-      await projectService.addRecord(ownerUid, projectId, { mssv, data: fullData });
+      const res = await fetch("/api/remote/record", {
+        method: "POST",
+        body: JSON.stringify({ 
+          ownerUid, 
+          projectId, 
+          record: { mssv, data: fullData } 
+        })
+      });
+
+      if (!res.ok) throw new Error("API Record Submit Failed");
+
       setLastScanned(mssv);
       setTimeout(() => setLastScanned(null), 2500);
       return true;
@@ -131,6 +179,7 @@ export function useRemoteScan(projectId: string, ownerUid: string | null) {
     deviceIp,
     lastScanned,
     isSyncing,
+    debugLog,
     login,
     submitRecord
   };
