@@ -14,6 +14,23 @@ const Scanner: React.FC<ScannerProps> = ({ onScanSuccess, onClose }) => {
   const [error, setError] = useState<string | null>(null);
   const scannerRef = useRef<Html5Qrcode | null>(null);
 
+  const stopTracks = () => {
+    try {
+      if (scannerRef.current) {
+        // html5-qrcode's clear() method helps release the video element
+        scannerRef.current.clear();
+      }
+      
+      // Manually stop all tracks to ensure camera light turns off immediately
+      const stream = document.querySelector("#scanner-container video") as HTMLVideoElement;
+      if (stream && stream.srcObject instanceof MediaStream) {
+        stream.srcObject.getTracks().forEach(track => track.stop());
+      }
+    } catch (e) {
+      console.warn("Error during manual track cleanup", e);
+    }
+  };
+
   useEffect(() => {
     const startScanner = async () => {
       try {
@@ -23,7 +40,6 @@ const Scanner: React.FC<ScannerProps> = ({ onScanSuccess, onClose }) => {
         const config = { 
           fps: 20, 
           qrbox: (viewfinderWidth: number, viewfinderHeight: number) => {
-            // Rectangular box for barcodes, but works for QR too
             const width = Math.min(viewfinderWidth * 0.8, 300);
             const height = Math.min(viewfinderHeight * 0.4, 150);
             return { width, height };
@@ -34,14 +50,19 @@ const Scanner: React.FC<ScannerProps> = ({ onScanSuccess, onClose }) => {
         await html5QrCode.start(
           { facingMode: "environment" },
           config,
-          (decodedText) => {
-            // Haptic feedback (vibration) if supported
+          async (decodedText) => {
+            if (html5QrCode.isScanning) {
+              await html5QrCode.stop().catch(err => console.error("Error stopping scanner on success", err));
+              stopTracks(); // Extra safety
+            }
+            
             if (typeof navigator !== "undefined" && navigator.vibrate) {
               navigator.vibrate(100);
             }
+            
             onScanSuccess(decodedText);
           },
-          () => {} // Ignore errors to keep scanning smooth
+          () => {} 
         );
         setIsInitializing(false);
       } catch (err) {
@@ -54,16 +75,21 @@ const Scanner: React.FC<ScannerProps> = ({ onScanSuccess, onClose }) => {
     startScanner();
 
     return () => {
-      if (scannerRef.current && scannerRef.current.isScanning) {
-        scannerRef.current.stop().catch(e => console.error("Error stopping scanner", e));
-      }
+      const cleanup = async () => {
+        if (scannerRef.current && scannerRef.current.isScanning) {
+          await scannerRef.current.stop().catch(e => console.error("Error stopping scanner", e));
+        }
+        stopTracks();
+      };
+      cleanup();
     };
   }, [onScanSuccess]);
 
   const handleStop = async () => {
     if (scannerRef.current && scannerRef.current.isScanning) {
-      await scannerRef.current.stop();
+      await scannerRef.current.stop().catch(() => {});
     }
+    stopTracks();
     onClose();
   };
 

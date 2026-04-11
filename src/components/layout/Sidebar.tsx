@@ -13,7 +13,9 @@ import {
   PlayCircle,
   User,
   ArrowLeft,
-  History
+  History,
+  FileSpreadsheet,
+  Smartphone
 } from "lucide-react";
 
 const Sidebar = () => {
@@ -34,6 +36,8 @@ const Sidebar = () => {
   const projectMenuItems = [
     { icon: LayoutDashboard, label: "Project Home", href: `/p/${projectId}/dashboard` },
     { icon: QrCode, label: "QR Scanner", href: `/p/${projectId}/scanner` },
+    { icon: FileSpreadsheet, label: "Live Sheets", href: `/p/${projectId}/sheets` },
+    { icon: Smartphone, label: "Mobile Scanners", href: `/p/${projectId}/collaboration` },
     { icon: Settings, label: "Project Settings", href: `/p/${projectId}/settings` },
     { icon: History, label: "Sync History", href: `/p/${projectId}/history` },
   ];

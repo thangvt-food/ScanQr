@@ -1,7 +1,19 @@
 "use client";
 
 import React from "react";
-import Scanner from "@/components/scanner/Scanner";
+import dynamic from "next/dynamic";
+
+const Scanner = dynamic(() => import("@/components/scanner/Scanner"), {
+  ssr: false,
+  loading: () => (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <div className="bg-office-surface p-8 rounded-office shadow-2xl flex flex-col items-center gap-4">
+        <div className="w-8 h-8 border-4 border-office-primary border-t-transparent rounded-full animate-spin" />
+        <p className="text-office-text-secondary font-medium">Loading Scanner...</p>
+      </div>
+    </div>
+  ),
+});
 import { ScannerHeader } from "@/app/scanner/ScannerHeader";
 import { ScannerStats } from "@/app/scanner/ScannerStats";
 import { ScanQueue } from "@/app/scanner/ScanQueue";

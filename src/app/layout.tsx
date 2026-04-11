@@ -14,6 +14,7 @@ export const metadata: Metadata = {
 };
 
 import { Providers } from "@/components/Providers";
+import DeviceGuard from "@/components/layout/DeviceGuard";
 
 export default function RootLayout({
   children,
@@ -24,7 +25,9 @@ export default function RootLayout({
     <html lang="vi" className={`${inter.variable} h-full antialiased`}>
       <body className="h-full">
         <Providers>
-          <MainLayout>{children}</MainLayout>
+          <DeviceGuard>
+            <MainLayout>{children}</MainLayout>
+          </DeviceGuard>
         </Providers>
       </body>
     </html>

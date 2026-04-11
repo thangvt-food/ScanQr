@@ -35,9 +35,29 @@ export async function POST(req: Request) {
       throw new Error(data.error?.message || "Failed to create spreadsheet");
     }
 
+    const spreadsheetId = data.spreadsheetId;
+
+    // Set permission to 'anyone' as 'writer' so it can be edited in the iframe
+    // This requires the 'https://www.googleapis.com/auth/drive.file' scope
+    try {
+      await fetch(`https://www.googleapis.com/drive/v3/files/${spreadsheetId}/permissions`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          role: "writer",
+          type: "anyone",
+        }),
+      });
+    } catch (e) {
+      console.warn("Failed to set public permissions, but spreadsheet was created", e);
+    }
+
     return NextResponse.json({
       success: true,
-      spreadsheetId: data.spreadsheetId,
+      spreadsheetId: spreadsheetId,
       spreadsheetUrl: data.spreadsheetUrl,
     });
   } catch (error: any) {

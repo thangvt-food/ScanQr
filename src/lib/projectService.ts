@@ -11,7 +11,106 @@ export interface ProjectConfig {
   createdAt: number;
 }
 
+export interface ScanRecord {
+  id: string;
+  mssv: string;
+  data: Record<string, string>;
+  timestamp: number;
+  isSynced?: boolean;
+}
 export const projectService = {
+  // Session Management for Remote Scanners
+  registerSession: async (userId: string, projectId: string, session: { id: string, ip: string, device: string }) => {
+    const sessionRef = ref(rtdb, `users/${userId}/projects/${projectId}/activeSessions/${session.id}`);
+    await set(sessionRef, {
+      ...session,
+      lastActive: Date.now()
+    });
+    return sessionRef;
+  },
+
+  updateSessionHeartbeat: async (userId: string, projectId: string, sessionId: string) => {
+    const sessionRef = ref(rtdb, `users/${userId}/projects/${projectId}/activeSessions/${sessionId}`);
+    await update(sessionRef, { lastActive: Date.now() });
+  },
+
+  removeSession: async (userId: string, projectId: string, sessionId: string) => {
+    const sessionRef = ref(rtdb, `users/${userId}/projects/${projectId}/activeSessions/${sessionId}`);
+    await remove(sessionRef);
+  },
+
+  subscribeToSessions: (userId: string, projectId: string, callback: (sessions: any[]) => void) => {
+    const sessionsRef = ref(rtdb, `users/${userId}/projects/${projectId}/activeSessions`);
+    return onValue(sessionsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (!data) {
+        callback([]);
+        return;
+      }
+      callback(Object.values(data));
+    });
+  },
+
+  // Record Management in RTDB
+  addRecord: async (userId: string, projectId: string, record: Omit<ScanRecord, "id" | "timestamp">) => {
+    const recordsRef = ref(rtdb, `users/${userId}/projects/${projectId}/records`);
+    const newRecordRef = push(recordsRef);
+    const id = newRecordRef.key as string;
+    
+    await set(newRecordRef, {
+      ...record,
+      id,
+      timestamp: Date.now(),
+      isSynced: false
+    });
+    return id;
+  },
+
+  updateRecord: async (userId: string, projectId: string, recordId: string, updates: Partial<ScanRecord>) => {
+    const recordRef = ref(rtdb, `users/${userId}/projects/${projectId}/records/${recordId}`);
+    await update(recordRef, updates);
+  },
+
+  deleteRecord: async (userId: string, projectId: string, recordId: string) => {
+    const recordRef = ref(rtdb, `users/${userId}/projects/${projectId}/records/${recordId}`);
+    await remove(recordRef);
+  },
+
+  clearRecords: async (userId: string, projectId: string) => {
+    const recordsRef = ref(rtdb, `users/${userId}/projects/${projectId}/records`);
+    await remove(recordsRef);
+  },
+
+  subscribeToRecords: (userId: string, projectId: string, callback: (records: ScanRecord[]) => void) => {
+    const recordsRef = ref(rtdb, `users/${userId}/projects/${projectId}/records`);
+    return onValue(recordsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (!data) {
+        callback([]);
+        return;
+      }
+      const recordsList = Object.values(data) as ScanRecord[];
+      callback(recordsList.sort((a, b) => b.timestamp - a.timestamp));
+    });
+  },
+
+  // Listen for projects list
+  subscribeToProjects: (userId: string, callback: (projects: ProjectConfig[]) => void) => {
+    const projectsRef = ref(rtdb, `users/${userId}/projects`);
+    return onValue(projectsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (!data) {
+        callback([]);
+        return;
+      }
+      const projectsList = Object.entries(data).map(([id, val]: [string, any]) => ({
+        ...val,
+        id // Ensure ID is correctly mapped from key
+      })) as ProjectConfig[];
+      callback(projectsList.sort((a, b) => b.createdAt - a.createdAt));
+    });
+  },
+
   // Create a new project
   createProject: async (userId: string, project: Omit<ProjectConfig, "id" | "createdAt">) => {
     const projectsRef = ref(rtdb, `users/${userId}/projects`);
@@ -26,21 +125,6 @@ export const projectService = {
 
     await set(newProjectRef, projectData);
     return id;
-  },
-
-  // Listen for projects list
-  subscribeToProjects: (userId: string, callback: (projects: ProjectConfig[]) => void) => {
-    const projectsRef = ref(rtdb, `users/${userId}/projects`);
-    return onValue(projectsRef, (snapshot) => {
-      const data = snapshot.val();
-      if (!data) {
-        callback([]);
-        return;
-      }
-      const projectsList = Object.values(data) as ProjectConfig[];
-      // Sort by dynamic priority if needed, here just createdAt
-      callback(projectsList.sort((a, b) => b.createdAt - a.createdAt));
-    });
   },
 
   // Update a project
@@ -59,7 +143,9 @@ export const projectService = {
   getProject: (userId: string, projectId: string, callback: (project: ProjectConfig | null) => void) => {
     const projectRef = ref(rtdb, `users/${userId}/projects/${projectId}`);
     return onValue(projectRef, (snapshot) => {
-      callback(snapshot.val());
+      const data = snapshot.val();
+      if (data) data.id = projectId; // Ensure ID is present
+      callback(data);
     });
   },
 
@@ -71,3 +157,4 @@ export const projectService = {
     });
   }
 };
+
