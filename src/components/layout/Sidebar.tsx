@@ -7,8 +7,6 @@ import {
   QrCode, 
   LayoutDashboard, 
   Settings, 
-  Database,
-  ChevronLeft,
   BookOpen,
   PlayCircle,
   User,

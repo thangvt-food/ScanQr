@@ -37,7 +37,7 @@ export default function ProjectSheetsPage() {
         <FileSpreadsheet size={48} className="mx-auto text-office-text-muted mb-4" />
         <h2 className="text-xl font-bold text-office-text uppercase">No Spreadsheet Linked</h2>
         <p className="text-office-text-secondary office-sm mt-2 mb-6">
-          This project hasn't been connected to a Google Sheet yet. Goto Project Settings to link one.
+          This project hasn&apos;t been connected to a Google Sheet yet. Goto Project Settings to link one.
         </p>
         <a href={`/p/${projectId}/settings`} className="office-btn-primary">Go to Settings</a>
       </div>

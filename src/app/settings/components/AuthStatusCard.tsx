@@ -3,8 +3,10 @@
 import React from "react";
 import { AlertTriangle, Info } from "lucide-react";
 
+import { User } from "firebase/auth";
+
 interface AuthStatusCardProps {
-  user: any;
+  user: User | null;
   accessToken: string | null;
   login: () => void;
 }

@@ -9,12 +9,12 @@ export const VerificationGuide: React.FC = () => {
       <div className="office-toolbar bg-office-error-bg/20">
         <AlertTriangle className="text-office-error-text" size={16} />
         <span className="office-sm font-bold uppercase tracking-widest text-office-error-text">
-          Lỗi "Google hasn't verified this app"
+          Lỗi &quot;Google hasn&apos;t verified this app&quot;
         </span>
       </div>
       <div className="p-5 space-y-4">
         <p className="office-sm text-office-text leading-relaxed">
-          Khi đăng nhập lần đầu, bạn có thể thấy màn hình cảnh báo "Google hasn't verified this app". Đây là điều bình
+          Khi đăng nhập lần đầu, bạn có thể thấy màn hình cảnh báo &quot;Google hasn&apos;t verified this app&quot;. Đây là điều bình
           thường với ứng dụng đang phát triển.
         </p>
 
@@ -46,8 +46,8 @@ export const VerificationGuide: React.FC = () => {
         <div className="bg-office-success-bg/30 border border-office-success-text/20 rounded-office p-4">
           <p className="office-xs font-bold text-office-success-text uppercase">Lưu ý cho Developer:</p>
           <p className="office-xs text-office-success-text mt-1 italic">
-            Hãy thêm địa chỉ email của user vào danh sách "Test Users" trong Google Cloud Console mục "OAuth consent
-            screen" để được phép đăng nhập.
+            Hãy thêm địa chỉ email của user vào danh sách &quot;Test Users&quot; trong Google Cloud Console mục &quot;OAuth consent
+            screen&quot; để được phép đăng nhập.
           </p>
         </div>
       </div>

@@ -53,7 +53,7 @@ export const projectService = {
     await remove(colabRef);
   },
 
-  subscribeToCollaborators: (userId: string, projectId: string, callback: (list: any[]) => void) => {
+  subscribeToCollaborators: (userId: string, projectId: string, callback: (list: { username: string, password: string, createdAt: number }[]) => void) => {
     const colabRef = ref(rtdb, `users/${userId}/projects/${projectId}/collaborators`);
     return onValue(colabRef, (snapshot) => {
       const data = snapshot.val();
@@ -81,7 +81,7 @@ export const projectService = {
     await remove(sessionRef);
   },
 
-  subscribeToSessions: (userId: string, projectId: string, callback: (sessions: any[]) => void) => {
+  subscribeToSessions: (userId: string, projectId: string, callback: (sessions: { id: string, ip: string, device: string, username?: string, lastActive: number }[]) => void) => {
     const sessionsRef = ref(rtdb, `users/${userId}/projects/${projectId}/activeSessions`);
     return onValue(sessionsRef, (snapshot) => {
       const data = snapshot.val();
@@ -145,8 +145,8 @@ export const projectService = {
         callback([]);
         return;
       }
-      const projectsList = Object.entries(data).map(([id, val]: [string, any]) => ({
-        ...val,
+      const projectsList = Object.entries(data).map(([id, val]) => ({
+        ...(val as Record<string, unknown>),
         id // Ensure ID is correctly mapped from key
       })) as ProjectConfig[];
       callback(projectsList.sort((a, b) => b.createdAt - a.createdAt));
@@ -192,7 +192,7 @@ export const projectService = {
   },
 
   // Subscribe to sync status
-  subscribeToSyncStatus: (userId: string, projectId: string, callback: (status: any) => void) => {
+  subscribeToSyncStatus: (userId: string, projectId: string, callback: (status: { stage?: string, isSyncing?: boolean, progress?: number } | null) => void) => {
     const statusRef = ref(rtdb, `users/${userId}/projects/${projectId}/syncStatus`);
     return onValue(statusRef, (snapshot) => {
       callback(snapshot.val());

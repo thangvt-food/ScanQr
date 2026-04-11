@@ -5,10 +5,7 @@ import {
   onAuthStateChanged, 
   signInWithPopup, 
   signOut, 
-  User, 
-  GoogleAuthProvider,
-  getRedirectResult,
-  signInWithRedirect
+  User
 } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
 
@@ -31,13 +28,14 @@ const AuthContext = createContext<AuthContextType>({
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("google_access_token");
+    }
+    return null;
+  });
 
   useEffect(() => {
-    // Restore token from localStorage
-    const savedToken = localStorage.getItem("google_access_token");
-    if (savedToken) setAccessToken(savedToken);
-
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);

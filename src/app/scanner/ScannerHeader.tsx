@@ -1,15 +1,17 @@
-"use client";
-
-import React from "react";
-import { LogIn, LogOut, Send, CloudUpload } from "lucide-react";
+import { User } from "firebase/auth";
 
 interface ScannerHeaderProps {
-  user: any;
+  user: User | null;
   accessToken: string | null;
   sheetName: string;
   projectName?: string;
   isSyncing: boolean;
-  syncStatus?: any;
+  syncStatus?: { 
+    stage: string; 
+    message: string; 
+    isError?: boolean; 
+    details?: string;
+  };
   onLogin: () => void;
   onLogout: () => void;
   onSync: () => void;

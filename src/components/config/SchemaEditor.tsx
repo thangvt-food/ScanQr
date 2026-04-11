@@ -94,7 +94,7 @@ export const SchemaEditor = () => {
       <div className="bg-blue-50 border border-blue-100 rounded-office p-3 flex gap-3">
         <Plus className="text-blue-500 shrink-0" size={18} />
         <p className="office-xs text-blue-700">
-           <b>Lưu ý:</b> Cột "MSSV" luôn được cố định vì là dữ liệu quét từ mã QR. Thứ tự các hàng trong bảng này tương ứng với thứ tự các cột (A, B, C...) trên Google Sheet.
+           <b>Lưu ý:</b> Cột &quot;MSSV&quot; luôn được cố định vì là dữ liệu quét từ mã QR. Thứ tự các hàng trong bảng này tương ứng với thứ tự các cột (A, B, C...) trên Google Sheet.
         </p>
       </div>
     </div>

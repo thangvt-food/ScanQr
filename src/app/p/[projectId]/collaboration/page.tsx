@@ -201,7 +201,7 @@ export default function CollaborationPage() {
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
                           <p className="office-sm font-bold text-office-text truncate">{session.username || "Guest Device"}</p>
-                          {session.device.includes("iPhone") ? <span className="text-[9px] bg-gray-100 px-1 rounded">iOS</span> : <span className="text-[9px] bg-gray-100 px-1 rounded">Android</span>}
+                          {session.device?.includes("iPhone") ? <span className="text-[9px] bg-gray-100 px-1 rounded">iOS</span> : <span className="text-[9px] bg-gray-100 px-1 rounded">Android</span>}
                         </div>
                         <p className="office-xs font-mono text-office-text-secondary">{session.ip}</p>
                       </div>
