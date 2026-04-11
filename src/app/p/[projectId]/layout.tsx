@@ -25,16 +25,30 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
   const [project, setProject] = useState<ProjectConfig | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!user || !projectId) return;
+  // Special handling for remote-scan route (bypasses admin layout rules)
+  const isRemoteScan = pathname?.includes("remote-scan");
 
-    const unsubscribe = projectService.getProject(user.uid, projectId, (data) => {
+  useEffect(() => {
+    if ((!user || !projectId) && !isRemoteScan) return;
+
+    const targetUid = isRemoteScan ? (new URLSearchParams(window.location.search).get("uid") || "") : user?.uid;
+    if (!targetUid || !projectId) {
+      if (!isRemoteScan) setLoading(false);
+      return;
+    }
+
+    const unsubscribe = projectService.getProject(targetUid, projectId, (data) => {
       setProject(data);
       setLoading(false);
     });
 
     return () => unsubscribe();
-  }, [user, projectId]);
+  }, [user, projectId, pathname, isRemoteScan]);
+
+  // Bypass for remote-scan which has its own layout/auth
+  if (isRemoteScan) {
+    return <>{children}</>;
+  }
 
   if (loading) {
     return (
@@ -49,7 +63,7 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
     return (
       <div className="p-12 text-center max-w-md mx-auto space-y-4">
         <h2 className="text-xl font-bold text-office-text uppercase">Project Not Found</h2>
-        <p className="text-office-text-secondary office-sm">The project you're looking for doesn't exist or you don't have access.</p>
+        <p className="text-office-text-secondary office-sm">The project you&apos;re looking for doesn&apos;t exist or you don&apos;t have access.</p>
         <button onClick={() => router.push("/")} className="office-btn-primary w-full">Back to Workspace</button>
       </div>
     );
