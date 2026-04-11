@@ -3,10 +3,10 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname, useParams } from "next/navigation";
-import { 
-  QrCode, 
-  LayoutDashboard, 
-  Settings, 
+import {
+  QrCode,
+  LayoutDashboard,
+  Settings,
   BookOpen,
   PlayCircle,
   User,
@@ -26,7 +26,7 @@ const Sidebar = () => {
     { icon: LayoutDashboard, label: "Dự án của bạn", href: "/" },
     { icon: Settings, label: "Cài đặt ứng dụng", href: "/app-settings" }, // Global settings
     { icon: BookOpen, label: "Tài liệu hướng dẫn", href: "/docs" },
-    { icon: PlayCircle, label: "Kênh YouTube", href: "https://youtube.com", external: true },
+    { icon: PlayCircle, label: "Kênh YouTube", href: "https://www.youtube.com/playlist?list=PLTPqSJ_yk--_OxGR_QcVtVv3Nm07uOqA_", external: true },
     { icon: User, label: "Thông tin phát triển", href: "/about" },
   ];
 
@@ -59,7 +59,7 @@ const Sidebar = () => {
       {/* Context Switcher (Only in project view) */}
       {projectId && (
         <div className="px-2 pt-4">
-          <Link 
+          <Link
             href="/"
             className="flex items-center gap-3 px-4 py-2 text-office-text-secondary hover:text-office-primary hover:bg-office-primary/5 rounded-office transition-all office-xs font-bold uppercase tracking-widest"
           >
@@ -77,12 +77,12 @@ const Sidebar = () => {
         {currentMenu.map((item) => {
           const isActive = pathname === item.href;
           const isExternal = 'external' in item && item.external;
-          
+
           const content = (
             <>
-              <item.icon 
-                size={18} 
-                className={isActive ? "text-office-primary" : "text-office-text-muted group-hover:text-office-text"} 
+              <item.icon
+                size={18}
+                className={isActive ? "text-office-primary" : "text-office-text-muted group-hover:text-office-text"}
               />
               <span className="font-medium office-sm">{item.label}</span>
               {isActive && (
@@ -111,8 +111,8 @@ const Sidebar = () => {
               href={item.href}
               className={`
                 flex items-center gap-3 px-4 py-2 rounded-office transition-all duration-200 group
-                ${isActive 
-                  ? "bg-office-primary/10 text-office-primary" 
+                ${isActive
+                  ? "bg-office-primary/10 text-office-primary"
                   : "text-office-text-secondary hover:bg-office-bg hover:text-office-text"
                 }
               `}
