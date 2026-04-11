@@ -1,0 +1,35 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        "tokens": {
+          ".read": "auth != null && auth.uid == $uid",
+          ".write": "auth != null && auth.uid == $uid"
+        },
+        "projects": {
+          // Quan trọng: Admin phải có quyền đọc ở cấp này để lấy danh sách dự án
+          ".read": "auth != null && auth.uid == $uid",
+          
+          "$projectId": {
+            // Cho phép bất kỳ ai có ID đều có thể đọc cấu hình dự án lẻ
+            ".read": "true",
+            // Chỉ Admin mới có quyền ghi cấu hình
+            ".write": "auth != null && auth.uid == $uid",
+            
+            "activeSessions": {
+              ".write": "true"
+            },
+            "records": {
+              ".write": "true"
+            },
+            "syncStatus": {
+              // Admin đọc được trạng thái đồng bộ
+              ".read": "auth != null && auth.uid == $uid",
+              ".write": "auth != null && auth.uid == $uid"
+            }
+          }
+        }
+      }
+    }
+  }
+}

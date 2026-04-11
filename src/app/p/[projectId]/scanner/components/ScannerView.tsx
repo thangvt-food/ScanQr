@@ -14,9 +14,9 @@ const Scanner = dynamic(() => import("@/components/scanner/Scanner"), {
     </div>
   ),
 });
-import { ScannerHeader } from "@/app/scanner/ScannerHeader";
-import { ScannerStats } from "@/app/scanner/ScannerStats";
-import { ScanQueue } from "@/app/scanner/ScanQueue";
+import { ScannerHeader } from "./ScannerHeader";
+import { ScannerStats } from "./ScannerStats";
+import { ScanQueue } from "./ScanQueue";
 
 interface ScannerViewProps {
   user: any;
@@ -81,6 +81,7 @@ export const ScannerView: React.FC<ScannerViewProps> = ({
 
         <div className="lg:col-span-3">
           <ScanQueue 
+            fields={project?.fields || []}
             records={records}
             onRemoveRecord={onRemoveRecord}
             onUpdateData={onUpdateRecord}

@@ -11,6 +11,7 @@ export const ProjectManager = () => {
   const [projects, setProjects] = useState<ProjectConfig[]>([]);
   const [isAdding, setIsAdding] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   const [newProject, setNewProject] = useState({
     name: "",
@@ -21,10 +22,20 @@ export const ProjectManager = () => {
   useEffect(() => {
     if (!user) return;
     
-    const unsubscribe = projectService.subscribeToProjects(user.uid, (data) => {
-      setProjects(data);
-      setLoading(false);
-    });
+    setLoading(true);
+    const unsubscribe = projectService.subscribeToProjects(
+      user.uid, 
+      (data) => {
+        setProjects(data);
+        setLoading(false);
+        setError(null);
+      },
+      (err) => {
+        console.error("RTDB Subscription Error:", err);
+        setError(err.message);
+        setLoading(false);
+      }
+    );
 
     return () => unsubscribe();
   }, [user]);
@@ -59,6 +70,17 @@ export const ProjectManager = () => {
   };
 
   if (loading) return <div className="p-8 text-center text-office-text-secondary office-sm uppercase tracking-widest animate-pulse">Loading Workspace...</div>;
+  
+  if (error) {
+    return (
+      <div className="office-card p-12 text-center border-red-200 bg-red-50">
+        <Database size={48} className="mx-auto text-red-300 mb-4" />
+        <h3 className="font-bold text-red-800 mb-2 uppercase">Connection Error</h3>
+        <p className="text-red-600 office-sm mb-6">{error}</p>
+        <button onClick={() => window.location.reload()} className="office-btn-primary bg-red-600 border-red-700 hover:bg-red-700">Retry Connection</button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

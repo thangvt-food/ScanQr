@@ -139,7 +139,7 @@ export const projectService = {
   },
 
   // Listen for projects list
-  subscribeToProjects: (userId: string, callback: (projects: ProjectConfig[]) => void) => {
+  subscribeToProjects: (userId: string, callback: (projects: ProjectConfig[]) => void, errorCallback?: (error: any) => void) => {
     const projectsRef = ref(rtdb, `users/${userId}/projects`);
     return onValue(projectsRef, (snapshot) => {
       const data = snapshot.val();
@@ -152,6 +152,8 @@ export const projectService = {
         id // Ensure ID is correctly mapped from key
       })) as ProjectConfig[];
       callback(projectsList.sort((a, b) => b.createdAt - a.createdAt));
+    }, (error) => {
+      if (errorCallback) errorCallback(error);
     });
   },
 

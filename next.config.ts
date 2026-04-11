@@ -1,35 +1,37 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: false, // Disable strict mode to reduce double-renders and speed up dev
-  swcMinify: true, // Use high-performance Rust compiler
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  reactStrictMode: false,
+  // swcMinify: true, // Enabled by default in modern Next.js
+
+  // Fix HMR/WebSocket origins for tunnel/IP access
+  allowedDevOrigins: ['26.243.185.95', 'localhost:3000', 'my-pro-app.loca.lt'],
+
   experimental: {
     serverActions: {
-      allowedOrigins: ['26.243.185.95', 'localhost:3000'],
+      allowedOrigins: ['26.243.185.95', 'localhost:3000', 'my-pro-app.loca.lt'],
     },
+
     optimizePackageImports: [
-      "lucide-react",
-      "googleapis",
-      "firebase",
+      "lucide-react", 
+      "googleapis", 
+      "firebase", 
       "firebase-admin",
-      "html5-qrcode",
-      "zod",
-      "zustand",
-      "@hookform/resolvers",
+      "html5-qrcode", 
+      "zod", 
+      "zustand", 
+      "@hookform/resolvers", 
       "react-hook-form"
     ],
   },
+
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-  devIndicators: {
-    appIsrStatus: true,
-  },
-  allowedDevOrigins: ['26.243.185.95'],
-  typescript: {
-    ignoreBuildErrors: true, 
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
+
+  // Bỏ qua lỗi TypeScript để build nhanh hơn (tốt cho giai đoạn dev/testing)
+  typescript: { 
+    ignoreBuildErrors: true 
   },
 };
 

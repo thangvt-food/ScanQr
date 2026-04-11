@@ -1,36 +1,35 @@
 "use client";
 
 import React from "react";
-import { UserPlus, Trash2 } from "lucide-react";
-import { ScanRecord } from "@/hooks/useScanStore";
-import { useConfigStore } from "@/hooks/useConfigStore";
+import { Trash2, Inbox } from "lucide-react";
+import { ScanRecord } from "@/lib/projectService";
 
 interface ScanQueueProps {
+  fields: { id: string; label: string }[];
   records: ScanRecord[];
   onRemoveRecord: (id: string) => void;
   onUpdateData: (id: string, fieldId: string, value: string) => void;
 }
 
-export const ScanQueue: React.FC<ScanQueueProps> = ({ records, onRemoveRecord, onUpdateData }) => {
-  const { fields } = useConfigStore();
+export const ScanQueue: React.FC<ScanQueueProps> = ({ fields, records, onRemoveRecord, onUpdateData }) => {
 
   return (
     <div className="office-card min-h-[400px] flex flex-col">
       <div className="office-toolbar justify-between">
-        <span className="office-sm font-bold text-office-text-secondary uppercase tracking-widest">Local Storage Queue</span>
+        <span className="office-sm font-bold text-office-text-secondary uppercase tracking-widest">Scanning Queue</span>
         <div className="flex items-center gap-4">
-          <span className="office-xs text-office-text-muted italic">Persisted in Browser</span>
+          <span className="office-xs text-office-text-muted italic">Realtime Sync Enabled</span>
         </div>
       </div>
       
       {records.length === 0 ? (
         <div className="flex-1 flex flex-col items-center justify-center p-12 text-center">
           <div className="p-4 bg-office-bg rounded-full text-office-text-muted mb-4 opacity-50">
-            <UserPlus size={48} />
+            <Inbox size={48} />
           </div>
           <h3 className="office-base font-bold text-office-text-secondary">No local records found</h3>
           <p className="office-xs text-office-text-muted mt-2 max-w-xs">
-            Data is saved automatically to your browser storage even if you close this tab.
+            Data is synced in real-time across devices and stored securely in the cloud.
           </p>
         </div>
       ) : (
