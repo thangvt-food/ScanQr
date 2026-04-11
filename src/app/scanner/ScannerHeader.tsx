@@ -1,4 +1,6 @@
+import React from "react";
 import { User } from "firebase/auth";
+import { LogIn, LogOut, Send, CloudUpload } from "lucide-react";
 
 interface ScannerHeaderProps {
   user: User | null;

@@ -21,11 +21,23 @@ export function useRemoteScan(projectId: string, ownerUid: string | null) {
     }
 
     const init = async () => {
+      const timeout = setTimeout(() => {
+        if (loading) {
+          setAuthStatus("error");
+          setLoading(false);
+        }
+      }, 7000); // 7 second timeout for mobile connections
+
       try {
         // 1. Get Device IP
-        const ipRes = await fetch("https://api.ipify.org?format=json").catch(() => ({ json: () => ({ ip: "unknown" }) }));
-        const ipData = await (ipRes as any).json();
-        const currentIp = ipData.ip;
+        let currentIp = "unknown";
+        try {
+          const ipRes = await fetch("https://api.ipify.org?format=json", { signal: AbortSignal.timeout(4000) });
+          const ipData = await ipRes.json();
+          currentIp = ipData.ip;
+        } catch (e) {
+          console.warn("IP fetch failed, continuing as unknown");
+        }
         setDeviceIp(currentIp);
 
         // 2. Check Blacklist
@@ -44,9 +56,11 @@ export function useRemoteScan(projectId: string, ownerUid: string | null) {
         }
         sessionIdRef.current = sid;
 
+        clearTimeout(timeout);
         setLoading(false);
         return () => unsubBlocked();
       } catch (err) {
+        clearTimeout(timeout);
         setAuthStatus("error");
         setLoading(false);
       }
