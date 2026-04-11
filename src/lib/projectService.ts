@@ -19,8 +19,50 @@ export interface ScanRecord {
   isSynced?: boolean;
 }
 export const projectService = {
+  // IP Blocking
+  blockIp: async (userId: string, projectId: string, ip: string) => {
+    const blockRef = ref(rtdb, `users/${userId}/projects/${projectId}/blockedIps/${ip.replace(/\./g, '_')}`);
+    await set(blockRef, { ip, timestamp: Date.now() });
+  },
+
+  unblockIp: async (userId: string, projectId: string, ip: string) => {
+    const blockRef = ref(rtdb, `users/${userId}/projects/${projectId}/blockedIps/${ip.replace(/\./g, '_')}`);
+    await remove(blockRef);
+  },
+
+  subscribeToBlockedIps: (userId: string, projectId: string, callback: (ips: string[]) => void) => {
+    const blockRef = ref(rtdb, `users/${userId}/projects/${projectId}/blockedIps`);
+    return onValue(blockRef, (snapshot) => {
+      const data = snapshot.val();
+      if (!data) {
+        callback([]);
+        return;
+      }
+      callback(Object.keys(data).map(k => k.replace(/_/g, '.')));
+    });
+  },
+
+  // Collaborator Accounts (Issued by Admin)
+  addCollaborator: async (userId: string, projectId: string, collaborator: { username: string, password: string }) => {
+    const colabRef = ref(rtdb, `users/${userId}/projects/${projectId}/collaborators/${collaborator.username}`);
+    await set(colabRef, { ...collaborator, createdAt: Date.now() });
+  },
+
+  removeCollaborator: async (userId: string, projectId: string, username: string) => {
+    const colabRef = ref(rtdb, `users/${userId}/projects/${projectId}/collaborators/${username}`);
+    await remove(colabRef);
+  },
+
+  subscribeToCollaborators: (userId: string, projectId: string, callback: (list: any[]) => void) => {
+    const colabRef = ref(rtdb, `users/${userId}/projects/${projectId}/collaborators`);
+    return onValue(colabRef, (snapshot) => {
+      const data = snapshot.val();
+      callback(data ? Object.values(data) : []);
+    });
+  },
+
   // Session Management for Remote Scanners
-  registerSession: async (userId: string, projectId: string, session: { id: string, ip: string, device: string }) => {
+  registerSession: async (userId: string, projectId: string, session: { id: string, ip: string, device: string, username?: string }) => {
     const sessionRef = ref(rtdb, `users/${userId}/projects/${projectId}/activeSessions/${session.id}`);
     await set(sessionRef, {
       ...session,
