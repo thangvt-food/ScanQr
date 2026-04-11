@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import Scanner from "@/components/scanner/Scanner";
 import { UserCheck, Loader2 } from "lucide-react";
@@ -13,7 +13,7 @@ import { RemoteScanActions } from "./components/RemoteScanActions";
 import { RemoteScanManualForm } from "./components/RemoteScanManualForm";
 import { RemoteScanStatus } from "./components/RemoteScanStatus";
 
-export default function RemoteScanPage() {
+function RemoteScanContent() {
   const params = useParams();
   const searchParams = useSearchParams();
   const projectId = params.projectId as string;
@@ -38,8 +38,9 @@ export default function RemoteScanPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-office-bg flex items-center justify-center">
-        <Loader2 className="animate-spin text-office-primary" />
+      <div className="min-h-screen bg-office-bg flex flex-col items-center justify-center p-6 space-y-4">
+        <Loader2 className="animate-spin text-office-primary" size={40} />
+        <p className="office-sm font-bold text-office-text-secondary uppercase tracking-widest">Initialising Remote Interface...</p>
       </div>
     );
   }
@@ -99,5 +100,17 @@ export default function RemoteScanPage() {
         )}
       </div>
     </RemoteScanAuthGuard>
+  );
+}
+
+export default function RemoteScanPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-office-bg flex items-center justify-center">
+        <Loader2 className="animate-spin text-office-primary" />
+      </div>
+    }>
+      <RemoteScanContent />
+    </Suspense>
   );
 }

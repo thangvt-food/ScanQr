@@ -15,10 +15,8 @@ export function useRemoteScan(projectId: string, ownerUid: string | null) {
   const sessionIdRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!ownerUid || !projectId) {
-      setLoading(false);
-      return;
-    }
+    // Wait until both IDs are available from the URL
+    if (!ownerUid || !projectId) return;
 
     const init = async () => {
       const timeout = setTimeout(() => {
