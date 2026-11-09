@@ -1,0 +1,25 @@
+slug: scanqr
+name: ScanQr
+tagline: Điểm danh QR nhiều dự án, đồng bộ Google Sheets
+url: https://scan-qr-vtgroup.vercel.app
+status: paused
+visibility: public
+description: Nền tảng điểm danh và thu thập dữ liệu bằng QR, quản lý nhiều dự án, đồng bộ Google Sheets và Firebase.
+tags:
+  - qr
+  - điểm-danh
+  - google-sheets
+category: tools
+tech:
+  - next
+  - react
+  - firebase
+  - google-sheets
+hosting: vercel
+updated: '2026-04-11'
+version: 0.1.0
+icon: 📲
+auth: login
+links:
+  repo: https://github.com/thangvt-food/ScanQr
+notes: Deploy Vercel tại scan-qr-vtgroup.vercel.app; cấu hình Firebase trong repo.
